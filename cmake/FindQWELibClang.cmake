@@ -31,6 +31,14 @@ if(Clang_EXECUTABLE)
         set(QWELibClang_LLVM_BIN_PATH "${clang_output}" CACHE INTERNAL "internal")
     endif()
 
+    if(NOT DEFINED QWELibClang_COMPILER_BIN_PATH)
+        # Directory of the compiler that CMake invokes; on a wrapped toolchain
+        # this differs from QWELibClang_LLVM_BIN_PATH.
+        get_filename_component(QWELibClang_COMPILER_BIN_PATH "${Clang_EXECUTABLE}" DIRECTORY) # $compiler_base_path/bin
+        get_filename_component(QWELibClang_COMPILER_BASE_PATH "${QWELibClang_COMPILER_BIN_PATH}" DIRECTORY CACHE INTERNAL "internal") # $compiler_base_path
+        set(QWELibClang_COMPILER_BIN_PATH "${QWELibClang_COMPILER_BIN_PATH}" CACHE INTERNAL "internal")
+    endif()
+
     # Try to find the llvm-config executable, and extract the library location from it
     find_program(QWELibClang_LLVM_CONFIG_EXECUTABLE
         NAMES llvm-config
@@ -112,6 +120,8 @@ find_package_handle_standard_args(QWELibClang
 
 mark_as_advanced(QWELibClang_LLVM_BIN_PATH)
 mark_as_advanced(QWELibClang_LLVM_BASE_PATH)
+mark_as_advanced(QWELibClang_COMPILER_BIN_PATH)
+mark_as_advanced(QWELibClang_COMPILER_BASE_PATH)
 mark_as_advanced(QWELibClang_LIBRARY_DIR)
 mark_as_advanced(QWELibClang_RUNTIME_PATH)
 mark_as_advanced(QWELibClang_RESOURCE_PATH)
